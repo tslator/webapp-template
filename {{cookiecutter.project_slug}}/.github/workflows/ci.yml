@@ -125,16 +125,15 @@ jobs:
           docker-compose ps
           sleep 10
 
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20"
+      - name: Install E2E Python dependencies
+        working-directory: ./backend
+        run: |
+          uv sync --extra e2e
+          uv run playwright install --with-deps
 
-      - name: Install Playwright
-        run: npm install -g @playwright/test && npx playwright install
-
-      - name: Run E2E tests
-        run: npx playwright test tests_e2e/
+      - name: Run E2E tests (Python Playwright)
+        working-directory: ./backend
+        run: uv run pytest ../tests_e2e/
 
       - name: Stop services
         if: always()

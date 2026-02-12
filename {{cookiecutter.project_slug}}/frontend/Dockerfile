@@ -1,23 +1,9 @@
-# Frontend Dockerfile using Nginx
-FROM node:20-alpine as builder
-
-WORKDIR /app
-
-# Copy frontend dependencies
-COPY package*.json ./
-
-# Install dependencies and build CSS
-RUN npm ci && npm run build:css
-
-
-# Production image
 FROM nginx:alpine
 
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
+WORKDIR /usr/share/nginx/html
 
-# Copy static files from builder
-COPY --from=builder /app/static /usr/share/nginx/html/static
+# Copy static assets and templates directly
+COPY static /usr/share/nginx/html/static
 COPY templates /usr/share/nginx/html/templates
 
 # Create non-root user for nginx

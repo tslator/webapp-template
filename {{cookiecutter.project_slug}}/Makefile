@@ -53,14 +53,6 @@ install:
 		echo "If that fails, ensure you have build tools: https://visualstudio.microsoft.com/visual-cpp-build-tools/" >&2; \
 		exit 1; \
 	)
-	@if command -v npm >/dev/null 2>&1; then \
-		cd frontend && npm install; \
-		echo "✅ Frontend dependencies installed"; \
-	else \
-		echo "⚠️  npm not found - skipping frontend install"; \
-		echo "   To use the UI, install Node.js from https://nodejs.org"; \
-		echo "   Then run: cd frontend && npm install"; \
-	fi
 	@echo "✅ Installation complete"
 
 setup: install
@@ -76,14 +68,11 @@ dev:
 	docker-compose up
 
 dev-local:
-	@echo "Starting services locally..."
-	$(MAKE) -j2 dev-backend dev-frontend
+	@echo "Starting backend locally..."
+	$(MAKE) dev-backend
 
 dev-backend:
 	cd backend && uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-
-dev-frontend:
-	cd frontend && npm run dev
 
 # Testing
 test: test-unit test-integration
@@ -99,7 +88,7 @@ test-integration:
 
 test-e2e:
 	@echo "Running E2E tests..."
-	npx playwright test tests_e2e/
+	cd backend && uv run pytest ../tests_e2e/ -v
 
 test-coverage:
 	@echo "Generating coverage report..."
@@ -173,7 +162,7 @@ clean-cache:
 
 clean-all: clean clean-docker
 	@echo "Removing virtual environments..."
-	rm -rf backend/.venv frontend/node_modules
+	rm -rf backend/.venv
 	@echo "✅ Full cleanup complete"
 
 # CI/CD
