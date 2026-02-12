@@ -55,6 +55,36 @@ Then visit:
 - Backend API: `http://localhost:8000`
 - API Docs: `http://localhost:8000/docs`
 
+### Windows Setup Notes
+
+On Windows, `make install` may fail when building C extensions (for example `greenlet`, `psycopg`). The template defaults to **Python 3.12** which has better wheel availability. The template uses `greenlet>=3.0.3` which has wheels for Python 3.12 and 3.13.
+
+If you encounter build failures:
+
+**Option 1: Clear the uv cache** (Usually fixes the issue)
+```powershell
+make clean-cache
+make install
+```
+
+**Option 2: Install Visual C++ Build Tools** (Required for source builds)
+- Download from https://visualstudio.microsoft.com/visual-cpp-build-tools/
+- Run the installer and select "Desktop development with C++"
+- Restart and try `make install` again
+
+**Option 3: Use Python 3.12** (Default)
+- The template defaults to Python 3.12 which has prebuilt wheels for all dependencies
+- Install from https://www.python.org/downloads/
+
+**Option 4: Use conda** (Easy on Windows)
+```bash
+conda create -n myapp python=3.12
+conda activate myapp
+# Then run make install
+```
+
+If you see errors mentioning `greenlet`, `cl.exe`, or `pg_config`, try one of the above options.
+
 ## Template Options
 
 When generating a project, you'll be prompted for:
@@ -64,7 +94,7 @@ When generating a project, you'll be prompted for:
 - **author_name** - Your name
 - **author_email** - Your email
 - **description** - Project description
-- **python_version** - Python version (default: 3.14)
+- **python_version** - Python version (default: 3.12 for better wheel compatibility)
 - **use_docker** - Include Docker support (recommended)
 - **use_postgresql** - PostgreSQL database (vs SQLite)
 - **use_redis** - Redis caching
@@ -140,7 +170,9 @@ make build             # Build Docker images
 - Pydantic 2.0+
 - Alembic (migrations)
 - Uvicorn (ASGI server)
- - psycopg (PostgreSQL driver) or SQLite (built-in)
+- psycopg (PostgreSQL driver, binary wheels)
+- greenlet (async SQLAlchemy support, binary wheels preferred)
+- aiosqlite (async SQLite support)
 
 ### Frontend
 - HTMX 1.9+
@@ -148,7 +180,7 @@ make build             # Build Docker images
 - Vite (build tool)
 
 ### Development
-- Python 3.14+
+- Python 3.12+ (3.14 supported with build tools)
 - uv (package manager)
 - pytest (testing)
 - Ruff (linting/formatting)

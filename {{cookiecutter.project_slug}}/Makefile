@@ -38,12 +38,21 @@ help:
 	@echo "Cleanup:"
 	@echo "  make clean            - Clean build artifacts and cache"
 	@echo "  make clean-docker     - Remove Docker containers and volumes"
+	@echo "  make clean-cache      - Clear uv package manager cache"
 	@echo "  make clean-all        - Clean everything"
 
 # Installation
 install:
 	@echo "Installing dependencies..."
-	cd backend && uv sync
+	@python -m pip install --upgrade pip setuptools wheel || true
+	cd backend && uv sync || ( \
+		echo "ERROR: backend install failed." >&2; \
+		echo "This often happens when downloading prebuilt wheels fails." >&2; \
+		echo "Try clearing the uv cache: uv cache clean" >&2; \
+		echo "Then re-run: make install" >&2; \
+		echo "If that fails, ensure you have build tools: https://visualstudio.microsoft.com/visual-cpp-build-tools/" >&2; \
+		exit 1; \
+	)
 	cd frontend && npm install
 	@echo "✅ Installation complete"
 
@@ -149,6 +158,11 @@ clean-docker:
 	docker-compose down -v
 	docker system prune -f
 	@echo "✅ Docker cleanup complete"
+
+clean-cache:
+	@echo "Clearing uv package cache..."
+	uv cache clean
+	@echo "✅ Cache cleaned"
 
 clean-all: clean clean-docker
 	@echo "Removing virtual environments..."

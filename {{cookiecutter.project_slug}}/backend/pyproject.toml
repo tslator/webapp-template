@@ -16,6 +16,7 @@ dependencies = [
     "fastapi==0.115.0",
     "uvicorn[standard]==0.30.0",
     "sqlalchemy==2.0.29",
+    "greenlet>=3.0.3",          # Async support for SQLAlchemy; 3.0.3+ has wheels for Python 3.13
     "alembic==1.13.1",
     "pydantic==2.6.0",
     "pydantic-settings==2.2.0",
@@ -46,7 +47,7 @@ test = [
 ]
 
 e2e = [
-    "playwright==1.40.0",
+    "playwright>=1.45.0",
 ]
 
 # Optional dependency groups for different datastores. Install with e.g.
@@ -65,6 +66,8 @@ sqlite = [
 
 [tool.uv]
 python-version = "{{ cookiecutter.python_version }}"
+# Prefer binary wheels to avoid build failures on Windows (greenlet, psycopg, etc.)
+prefer-binary = true
 
 [tool.black]
 line-length = 120

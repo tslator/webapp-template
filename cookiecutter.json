@@ -4,7 +4,7 @@
   "project_name": "My Web Application",
   "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '-').replace('_', '-') }}",
   "project_description": "A modern web application built with FastAPI, SQLAlchemy, and HTMX",
-  "python_version": "3.14",
+  "python_version": "3.12",
   "use_docker": "y",
   "use_sqlite": "y",
   "use_postgresql": "n",
