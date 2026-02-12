@@ -56,11 +56,10 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
+    {%- if cookiecutter.use_postgresql == 'y' %}
     depends_on:
-      {%- if cookiecutter.use_postgresql == 'y' %}
-      postgres:
-        condition: service_healthy
-      {%- endif %}
+      - postgres
+    {%- endif %}
     networks:
       - app-network
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
@@ -81,6 +80,7 @@ services:
     networks:
       - app-network
 
+{%- if cookiecutter.use_postgresql == 'y' or cookiecutter.use_redis == 'y' %}
 volumes:
   {%- if cookiecutter.use_postgresql == 'y' %}
   postgres_data:
@@ -90,6 +90,7 @@ volumes:
   redis_data:
     driver: local
   {%- endif %}
+{%- endif %}
 
 networks:
   app-network:

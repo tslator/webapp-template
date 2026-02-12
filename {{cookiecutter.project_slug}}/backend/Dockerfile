@@ -7,9 +7,10 @@ WORKDIR /tmp
 # Install uv
 RUN pip install uv
 
-# Copy project files
+# Copy project files required for building the environment
 COPY pyproject.toml pyproject.toml
 COPY uv.lock uv.lock
+COPY README.md README.md
 
 # Build virtual environment
 RUN uv venv /opt/venv
