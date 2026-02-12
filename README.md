@@ -68,6 +68,7 @@ When generating a project, you'll be prompted for:
 - **use_docker** - Include Docker support (recommended)
 - **use_postgresql** - PostgreSQL database (vs SQLite)
 - **use_redis** - Redis caching
+- **use_sqlite** - Use SQLite instead of PostgreSQL
 - **github_username** - Your GitHub username
 
 ## Generated Project Structure
@@ -139,7 +140,7 @@ make build             # Build Docker images
 - Pydantic 2.0+
 - Alembic (migrations)
 - Uvicorn (ASGI server)
-- psycopg2 (PostgreSQL driver)
+ - psycopg (PostgreSQL driver) or SQLite (built-in)
 
 ### Frontend
 - HTMX 1.9+

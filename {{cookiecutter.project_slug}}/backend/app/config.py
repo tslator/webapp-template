@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     # Database configuration
     {%- if cookiecutter.use_postgresql == 'y' %}
     DATABASE_URL: str = "postgresql+asyncpg://{{ cookiecutter.db_user }}:password@localhost:5432/{{ cookiecutter.db_name }}"
+    {%- elif cookiecutter.use_sqlite == 'y' %}
+    DATABASE_URL: str = "sqlite+aiosqlite:///./{{ cookiecutter.project_slug }}.db"
     {%- else %}
     DATABASE_URL: str = "sqlite+aiosqlite:///./test.db"
     {%- endif %}

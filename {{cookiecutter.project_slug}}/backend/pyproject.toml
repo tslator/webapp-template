@@ -20,7 +20,9 @@ dependencies = [
     "pydantic==2.6.0",
     "pydantic-settings==2.2.0",
     "python-dotenv==1.0.0",
-    "psycopg2-binary==2.9.9",  # PostgreSQL driver
+    "psycopg[binary]>=3.1.0",  # PostgreSQL driver (psycopg v3, binary wheel)
+    "redis>=4.6.0",            # Redis client
+    "aiosqlite>=0.18.0",       # Optional async SQLite support
 ]
 
 [project.optional-dependencies]
@@ -45,6 +47,20 @@ test = [
 
 e2e = [
     "playwright==1.40.0",
+]
+
+# Optional dependency groups for different datastores. Install with e.g.
+# `pip install .[postgres]` or `pip install .[redis]` if desired.
+postgres = [
+    "psycopg[binary]>=3.1.0",
+]
+
+redis = [
+    "redis>=4.6.0",
+]
+
+sqlite = [
+    "aiosqlite>=0.18.0",
 ]
 
 [tool.uv]
@@ -111,3 +127,6 @@ exclude_lines = [
     "if TYPE_CHECKING:",
     "if typing.TYPE_CHECKING:",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
