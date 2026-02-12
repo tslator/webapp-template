@@ -53,7 +53,14 @@ install:
 		echo "If that fails, ensure you have build tools: https://visualstudio.microsoft.com/visual-cpp-build-tools/" >&2; \
 		exit 1; \
 	)
-	cd frontend && npm install
+	@if command -v npm >/dev/null 2>&1; then \
+		cd frontend && npm install; \
+		echo "✅ Frontend dependencies installed"; \
+	else \
+		echo "⚠️  npm not found - skipping frontend install"; \
+		echo "   To use the UI, install Node.js from https://nodejs.org"; \
+		echo "   Then run: cd frontend && npm install"; \
+	fi
 	@echo "✅ Installation complete"
 
 setup: install

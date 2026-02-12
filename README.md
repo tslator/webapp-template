@@ -42,6 +42,8 @@ cookiecutter ./webapp-template
 
 **NOTE: This project assumes `make` is installed.  For Windows, `choco install make`**
 
+**Node.js & npm** are required for frontend development (Tailwind CSS, Vite, HTMX tooling). Download from https://nodejs.org if you need the frontend UI. Backend can run without Node.js.
+
 ### After Generation
 
 ```bash

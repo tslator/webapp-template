@@ -64,10 +64,6 @@ sqlite = [
     "aiosqlite>=0.18.0",
 ]
 
-[tool.uv]
-python-version = "{{ cookiecutter.python_version }}"
-# Prefer binary wheels to avoid build failures on Windows (greenlet, psycopg, etc.)
-prefer-binary = true
 
 [tool.black]
 line-length = 120
