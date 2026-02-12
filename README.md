@@ -40,6 +40,8 @@ Or from a local copy:
 cookiecutter ./webapp-template
 ```
 
+**NOTE: This project assumes `make` is installed.  For Windows, `choco install make`**
+
 ### After Generation
 
 ```bash
