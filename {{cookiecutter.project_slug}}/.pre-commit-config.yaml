@@ -1,0 +1,92 @@
+repos:
+  # Code formatting with Ruff
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.2.1
+    hooks:
+      - id: ruff
+        name: Ruff linting
+        args: [--fix]
+        stages: [commit]
+      - id: ruff-format
+        name: Ruff formatting
+        stages: [commit]
+
+  # Type checking with mypy
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        name: mypy type checking
+        additional_dependencies:
+          - types-python-dotenv
+          - sqlalchemy
+          - fastapi
+        args: [--ignore-missing-imports]
+        stages: [commit]
+
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        name: Trim trailing whitespace
+      - id: end-of-file-fixer
+        name: Fix end of file marker
+      - id: check-yaml
+        name: Check YAML syntax
+        args: [--unsafe]
+      - id: check-json
+        name: Check JSON syntax
+      - id: check-added-large-files
+        name: Check for large files
+        args: [--maxkb=1000]
+      - id: check-merge-conflict
+        name: Check for merge conflicts
+      - id: detect-private-key
+        name: Detect private keys
+      - id: mixed-line-ending
+        name: Check for mixed line endings
+        args: [--fix=lf]
+
+  # Python docstrings
+  - repo: https://github.com/PyCQA/docformatter
+    rev: v1.7.5
+    hooks:
+      - id: docformatter
+        name: Format docstrings
+        args: [--in-place, --make-summary-multi-line]
+        language_version: python3
+
+  # Security checks
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.7.5
+    hooks:
+      - id: bandit
+        name: Bandit security checks
+        args: [-ll, -x, -c, .bandit]
+        exclude: ^tests/
+        stages: [commit]
+
+# Configuration options
+default_language_version:
+  python: python{{ cookiecutter.python_version }}
+
+# Ignore specific files
+exclude: |
+  (?x)^(
+      venv/|
+      .venv/|
+      __pycache__/|
+      build/|
+      dist/|
+      \.eggs/|
+      \.git/|
+      \.github/|
+      \.mypy_cache/|
+      \.pytest_cache/|
+      \.ruff_cache/|
+      migrations/|
+  )
+
+# Run on all files on first install
+minimum_pre_commit_framework_version: 3.0.0

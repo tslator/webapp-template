@@ -1,0 +1,33 @@
+{
+  "name": "{{ cookiecutter.project_slug }}-frontend",
+  "version": "0.1.0",
+  "description": "{{ cookiecutter.project_description }}",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build:css": "tailwindcss -i ./static/css/input.css -o ./static/css/tailwind.css",
+    "build:css:watch": "tailwindcss -i ./static/css/input.css -o ./static/css/tailwind.css --watch",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "fastapi",
+    "htmx",
+    "tailwind"
+  ],
+  "author": "{{ cookiecutter.full_name }} <{{ cookiecutter.email }}>",
+  "license": "{{ cookiecutter.license }}",
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.10",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "prettier": "^3.1.1",
+    "tailwindcss": "^3.3.6",
+    "vite": "^5.0.8"
+  },
+  "dependencies": {
+    "htmx.org": "^1.9.10"
+  }
+}

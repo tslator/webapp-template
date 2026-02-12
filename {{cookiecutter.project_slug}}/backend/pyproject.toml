@@ -1,0 +1,113 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "{{ cookiecutter.project_slug }}-backend"
+version = "0.1.0"
+description = "{{ cookiecutter.project_description }}"
+readme = "README.md"
+requires-python = ">={{ cookiecutter.python_version }}"
+license = { text = "{{ cookiecutter.license }}" }
+authors = [{ name = "{{ cookiecutter.full_name }}", email = "{{ cookiecutter.email }}" }]
+keywords = ["fastapi", "sqlalchemy", "web"]
+
+dependencies = [
+    "fastapi==0.115.0",
+    "uvicorn[standard]==0.30.0",
+    "sqlalchemy==2.0.29",
+    "alembic==1.13.1",
+    "pydantic==2.6.0",
+    "pydantic-settings==2.2.0",
+    "python-dotenv==1.0.0",
+    "psycopg2-binary==2.9.9",  # PostgreSQL driver
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==7.4.4",
+    "pytest-asyncio==0.23.2",
+    "pytest-cov==4.1.0",
+    "pytest-mock==3.12.0",
+    "ruff==0.2.1",
+    "mypy==1.8.0",
+    "black==24.1.1",
+    "httpx==0.25.2",  # For testing async HTTP calls
+]
+
+test = [
+    "pytest==7.4.4",
+    "pytest-asyncio==0.23.2",
+    "pytest-cov==4.1.0",
+    "pytest-mock==3.12.0",
+    "httpx==0.25.2",
+]
+
+e2e = [
+    "playwright==1.40.0",
+]
+
+[tool.uv]
+python-version = "{{ cookiecutter.python_version }}"
+
+[tool.black]
+line-length = 120
+target-version = ["py314"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "A", "C4"]
+ignore = ["E501"]  # Line too long - handled by black
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+[tool.mypy]
+python_version = "{{ cookiecutter.python_version }}"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false  # Set to true for strict mode
+disallow_incomplete_defs = false
+check_untyped_defs = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
+    "alembic.*",
+    "sqlalchemy.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+addopts = "--cov=app --cov-report=html --cov-report=term-missing"
+
+[tool.coverage.run]
+branch = true
+omit = [
+    "*/tests/*",
+    "*/venv/*",
+    "*/__pycache__/*",
+    "*/site-packages/*",
+]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "if typing.TYPE_CHECKING:",
+]

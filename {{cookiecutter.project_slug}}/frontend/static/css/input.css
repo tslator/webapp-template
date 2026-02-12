@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles */
+:root {
+  --color-primary: theme('colors.blue.600');
+  --color-secondary: theme('colors.gray.600');
+}
+
+body {
+  @apply bg-gray-50 text-gray-900;
+}
+
+main {
+  @apply min-h-screen;
+}
+
+/* HTMX loading spinner */
+.htmx-settling {
+  opacity: 1;
+  transition: opacity 200ms ease-out;
+}
+
+.htmx-swapping {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+/* Loading indicator */
+.htmx-request .htmx-indicator {
+  display: inline-block;
+}
+
+.htmx-request.htmx-indicator {
+  display: none;
+}
+
+/* Animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+}

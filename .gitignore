@@ -1,0 +1,31 @@
+# Root .gitignore for template repository
+
+# Generated projects (when testing template locally)
+*/test-web-app/
+*/my-project/
+*/my-app/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.Python
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+tmpclaude-*.cwd
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/

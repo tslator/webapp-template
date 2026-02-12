@@ -1,0 +1,16 @@
+{
+  "full_name": "Your Full Name",
+  "email": "you@example.com",
+  "project_name": "My Web Application",
+  "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '-').replace('_', '-') }}",
+  "project_description": "A modern web application built with FastAPI, SQLAlchemy, and HTMX",
+  "python_version": "3.14",
+  "use_docker": "y",
+  "use_postgresql": "y",
+  "use_redis": "n",
+  "db_name": "{{ cookiecutter.project_slug }}_db",
+  "db_user": "{{ cookiecutter.project_slug }}_user",
+  "github_username": "username",
+  "github_repo": "{{ cookiecutter.project_slug }}",
+  "license": "MIT"
+}

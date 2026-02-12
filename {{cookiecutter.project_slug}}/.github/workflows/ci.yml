@@ -1,0 +1,158 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${% raw %}{{ github.repository }}{% endraw %}
+
+jobs:
+  lint:
+    name: Lint and Format Check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["{{ cookiecutter.python_version }}"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${% raw %}{{ matrix.python-version }}{% endraw %}
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Install dependencies
+        run: cd backend && uv sync
+
+      - name: Lint with Ruff
+        run: cd backend && uv run ruff check .
+
+      - name: Format check with Ruff
+        run: cd backend && uv run ruff format --check .
+
+      - name: Type check with mypy
+        run: cd backend && uv run mypy app/
+
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: {{ cookiecutter.db_name }}
+          POSTGRES_USER: {{ cookiecutter.db_user }}
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "{{ cookiecutter.python_version }}"
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Install dependencies
+        run: cd backend && uv sync
+
+      - name: Run pytest
+        env:
+          DATABASE_URL: postgresql+asyncpg://{{ cookiecutter.db_user }}:password@localhost:5432/{{ cookiecutter.db_name }}
+        run: cd backend && uv run pytest tests/ --cov=app --cov-report=xml --cov-report=term
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./backend/coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+
+  build:
+    name: Build Docker Images
+    runs-on: ubuntu-latest
+    if: ${% raw %}{{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}{% endraw %}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build backend image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend
+          push: false
+          tags: "{{ cookiecutter.project_slug }}:latest"
+
+      - name: Build frontend image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./frontend
+          push: false
+          tags: "{{ cookiecutter.project_slug }}-frontend:latest"
+
+  e2e:
+    name: End-to-End Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Compose
+        run: docker-compose --version
+
+      - name: Start services
+        run: docker-compose up -d
+
+      - name: Wait for services
+        run: |
+          docker-compose ps
+          sleep 10
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Install Playwright
+        run: npm install -g @playwright/test && npx playwright install
+
+      - name: Run E2E tests
+        run: npx playwright test tests_e2e/
+
+      - name: Stop services
+        if: always()
+        run: docker-compose down -v
+
+  security:
+    name: Security Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run SecurityDB scan
+        uses: securego/gosec@master
+        with:
+          args: "-no-fail -fmt sarif -out results.sarif ./..."
+        continue-on-error: true
+
+      - name: Upload SARIF results
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: results.sarif
